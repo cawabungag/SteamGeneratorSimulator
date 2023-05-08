@@ -45,8 +45,8 @@ public class SteamGeneratorActor : Singleton<SteamGeneratorActor>
 	private IEnumerator Wait(int waitSecond)
 	{
 		yield return new WaitForSeconds(waitSecond);
-		Bootstrap.Instance.LoginOpc.WriteNode("temperature", $"${_currentTempetaruture}");
-		Bootstrap.Instance.LoginOpc.WriteNode("preasure", $"${_curentPreasure}");
+		Bootstrap.Instance.LoginOpc.WriteNode("temperature", $"{_currentTempetaruture}");
+		Bootstrap.Instance.LoginOpc.WriteNode("preasure", $"{_curentPreasure}");
 		StopAllCoroutines();
 		_coroutine = null;
 	}

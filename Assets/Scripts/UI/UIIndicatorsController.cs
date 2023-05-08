@@ -1,4 +1,3 @@
-using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -17,7 +16,5 @@ namespace DefaultNamespace.UI
 
 		public void SetPreasure(string preasure)
 			=> _preasureText.text = preasure;
-
-		
 	}
 }

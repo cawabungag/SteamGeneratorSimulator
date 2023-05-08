@@ -12,7 +12,7 @@ namespace DefaultNamespace
 		private ClientLogIn _clientLogIn;
 		private object _mSession;
 
-		public async void Login()
+		public void Login()
 		{
 			_opcuaClient = new OpcuaClient();
 			_opcuaClient.ConnectComplete += OPCUAClient_ConnectComplete;
@@ -32,6 +32,7 @@ namespace DefaultNamespace
 			valueToWrite.Value.ServerTimestamp = DateTime.MinValue;
 			valueToWrite.Value.SourceTimestamp = DateTime.MinValue;
 			UIOPCUAHistory.Instance.AddHistory($"s={valueToWrite.NodeId.Identifier}", value.ToString());
+			_clientLogIn.SendNode(valueToWrite);
 		}
 
 		private void OPCUAClient_ConnectComplete(object sender, string[] e)
