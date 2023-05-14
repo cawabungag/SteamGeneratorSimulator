@@ -16,10 +16,10 @@ namespace States.Implementation
 		private double _finishTime;
 		private IStateConfiguration _configuration;
 
-		public HeatingState(IStateConfiguration configuration)
+		public HeatingState(IStateConfiguration configuration, Guid stateId)
 		{
 			_configuration = configuration;
-			StateId = Guid.NewGuid();
+			StateId = stateId;
 			Duration = configuration.Duration;
 		}
 

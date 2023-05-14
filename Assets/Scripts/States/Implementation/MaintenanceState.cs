@@ -14,10 +14,10 @@ namespace States.Implementation
 		private double _finishTime;
 		private IStateConfiguration _configuration;
 
-		public MaintenanceState(IStateConfiguration configuration)
+		public MaintenanceState(IStateConfiguration configuration, Guid stateId)
 		{
 			_configuration = configuration;
-			StateId = Guid.NewGuid();
+			StateId = stateId;
 			Duration = configuration.Duration;
 		}
 

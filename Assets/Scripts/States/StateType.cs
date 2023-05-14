@@ -4,6 +4,9 @@ namespace States
 	{
 		Heating, 
 		Maintenance, 
-		Сooling
+		Open,
+		Close,
+		PluggingIn,
+		PluggingOut
 	}
 }

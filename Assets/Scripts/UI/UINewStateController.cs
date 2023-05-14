@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using States;
 using States.Implementation;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace DefaultNamespace.UI
 {
@@ -11,9 +13,6 @@ namespace DefaultNamespace.UI
 	{
 		[SerializeField]
 		private Toggle _heatingToggle;
-
-		[SerializeField]
-		private Toggle _coolingToggle;
 
 		[SerializeField]
 		private Toggle _maintanceToggle;
@@ -66,10 +65,6 @@ namespace DefaultNamespace.UI
 					AddHeatingState(randomDuration);
 					break;
 
-				case 2:
-					AddColingState(randomDuration);
-					break;
-
 				case 3:
 					AddMaintenanceState(randomDuration);
 					break;
@@ -95,12 +90,6 @@ namespace DefaultNamespace.UI
 				return;
 			}
 
-			if (_coolingToggle.isOn)
-			{
-				AddColingState(duration);
-				return;
-			}
-
 			if (_maintanceToggle.isOn)
 			{
 				AddMaintenanceState(duration);
@@ -110,19 +99,13 @@ namespace DefaultNamespace.UI
 
 		private void AddHeatingState(int duration)
 		{
-			var heatingState = new HeatingState(new StateConfiguration(duration));
-			Bootstrap.Instance.StateMachine.AddState(heatingState);
-		}
-
-		private void AddColingState(int duration)
-		{
-			var heatingState = new СoolingState(new StateConfiguration(duration));
+			var heatingState = new HeatingState(new StateConfiguration(duration), Guid.NewGuid());
 			Bootstrap.Instance.StateMachine.AddState(heatingState);
 		}
 
 		private void AddMaintenanceState(int duration)
 		{
-			var heatingState = new MaintenanceState(new StateConfiguration(duration));
+			var heatingState = new MaintenanceState(new StateConfiguration(duration), Guid.NewGuid());
 			Bootstrap.Instance.StateMachine.AddState(heatingState);
 		}
 	}

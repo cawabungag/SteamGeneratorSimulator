@@ -13,7 +13,7 @@ public class CameraController : MonoBehaviour
 	{
 		if (!Input.GetKey(KeyCode.Z))
 			return;
-		
+
 		// Camera rotation
 		if (Input.GetMouseButton(0))
 		{
@@ -30,5 +30,7 @@ public class CameraController : MonoBehaviour
 		_currentZoomDistance = Mathf.Clamp(_currentZoomDistance, _minZoomDistance, _maxZoomDistance);
 		var zoomVector = -transform.forward * _currentZoomDistance;
 		transform.position = _target.position + zoomVector;
+
+		SteamGeneratorActor.Instance.Culling(_currentZoomDistance - 5f > Mathf.Epsilon);
 	}
 }

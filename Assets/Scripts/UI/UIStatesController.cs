@@ -122,9 +122,6 @@ namespace DefaultNamespace.UI
 				case StateType.Maintenance:
 					stateText = "Поддерживание";
 					break;
-				case StateType.Сooling:
-					stateText = "Охлаждение";
-					break;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(stateType), stateType, null);
 			}
@@ -142,9 +139,6 @@ namespace DefaultNamespace.UI
 					break;
 				case StateType.Maintenance:
 					stateColor = _maintanceColor;
-					break;
-				case StateType.Сooling:
-					stateColor = _coolingColor;
 					break;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(stateType), stateType, null);

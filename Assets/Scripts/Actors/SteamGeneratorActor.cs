@@ -10,26 +10,59 @@ public class SteamGeneratorActor : Singleton<SteamGeneratorActor>
 	private MeshRenderer[] _renderers;
 
 	[SerializeField]
-	private Gradient _gradient;
+	private MeshRenderer[] _cullingRenderers;
 
+	[SerializeField]
+	private Gradient _gradient;
+	
 	private float _currentTempetaruture = Utils.MIN_TEMPERATURE;
-	private float _curentPreasure = 0f;
+	private float _curentPreasure;
+	private bool _isOpened;
+	private bool _isPlugin;
 
 	private void Start() => SetTemperature(0);
 
+	public void Culling(bool isShow)
+	{
+		foreach (var meshRenderer in _cullingRenderers)
+			meshRenderer.gameObject.SetActive(isShow);
+	}
+
 	public void SetTemperature(float deltaTemperature)
 	{
+		if (!_isPlugin)
+			return;
+
 		var newTemperature = Math.Clamp(_currentTempetaruture + deltaTemperature, Utils.MIN_TEMPERATURE,
 			Utils.MAX_TEMPERATURE);
 		_currentTempetaruture = newTemperature;
 
 		var colorFactor = Mathf.Clamp01((newTemperature - Utils.MIN_TEMPERATURE)
 										/ (Utils.MAX_TEMPERATURE - Utils.MIN_TEMPERATURE));
-		_curentPreasure = 0.8f * colorFactor;
-		SetColor(colorFactor);
 
+		if (newTemperature > 100f)
+			_curentPreasure = Utils.MAX_PREASURE * colorFactor;
+
+		if (Math.Abs(_curentPreasure - Utils.MAX_PREASURE) < 0.001f)
+		{
+			_isOpened = true;
+		}
+
+		SetColor(colorFactor);
 		UIIndicatorsController.Instance.SetTemperature($"Текущая температура: {newTemperature:F1}°C");
 		UIIndicatorsController.Instance.SetPreasure($"Текущее рабочее давление: {_curentPreasure:F}МПа");
+	}
+
+	public void SetOpenState(bool state)
+	{
+		_isOpened = state;
+		UIIndicatorsController.Instance.SetOpen(_isOpened);
+	}
+
+	public void SetPlugin(bool state)
+	{
+		_isPlugin = state;
+		UIIndicatorsController.Instance.SetPlugin(_isPlugin);
 	}
 
 	private Coroutine _coroutine;
