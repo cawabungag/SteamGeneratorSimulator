@@ -14,6 +14,7 @@ namespace DefaultNamespace
 
 		public const float MAX_TEMPERATURE = 175;
 		public const float MIN_TEMPERATURE = 21;
+		public const float MIN_PREASURE = 0;
 		public const float MAX_PREASURE = 0.8f;
 
 		public static IState ToClientState(this State serverState)

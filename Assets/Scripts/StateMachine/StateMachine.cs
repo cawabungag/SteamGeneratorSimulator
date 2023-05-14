@@ -32,6 +32,17 @@ namespace DefaultNamespace.StateMachine
 			_states = new Queue<IState>(_states.Where(x => x.StateId != guid));
 		}
 
+		public void FinishAllState()
+		{
+			var states = _states.ToArray();
+			
+			foreach (var state in states) 
+				UIStatesController.Instance.DeleteState(state.StateId);
+
+			_states = new Queue<IState>();
+			FinishCurentState();
+		}
+
 
 		public void Execute(float deltaTime)
 		{

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using DefaultNamespace;
 using DefaultNamespace.UI;
+using States;
 using UnityEngine;
 
 public class SteamGeneratorActor : Singleton<SteamGeneratorActor>
@@ -15,12 +16,23 @@ public class SteamGeneratorActor : Singleton<SteamGeneratorActor>
 	[SerializeField]
 	private Gradient _gradient;
 	
+	[SerializeField]
+	private GameObject _steamParticle;
+
 	private float _currentTempetaruture = Utils.MIN_TEMPERATURE;
 	private float _curentPreasure;
 	private bool _isOpened;
 	private bool _isPlugin;
 
-	private void Start() => SetTemperature(0);
+	private void Start()
+	{
+		SetSteamParticle(false);
+		SetTemperature(0);
+		SetOpenState(false);
+		SetPlugin(false);
+		UIIndicatorsController.Instance.SetTemperature($"Текущая температура: {Utils.MIN_TEMPERATURE:F1}°C");
+		UIIndicatorsController.Instance.SetPreasure($"Текущее рабочее давление: {Utils.MIN_PREASURE:F}МПа");
+	}
 
 	public void Culling(bool isShow)
 	{
@@ -30,6 +42,8 @@ public class SteamGeneratorActor : Singleton<SteamGeneratorActor>
 
 	public void SetTemperature(float deltaTemperature)
 	{
+		SetSteamParticle(false);
+
 		if (!_isPlugin)
 			return;
 
@@ -45,8 +59,12 @@ public class SteamGeneratorActor : Singleton<SteamGeneratorActor>
 
 		if (Math.Abs(_curentPreasure - Utils.MAX_PREASURE) < 0.001f)
 		{
-			_isOpened = true;
+			ServerStatesController.Instance.DeleteAll();
+			_isPlugin = false;
+			_isOpened = false;
 		}
+
+		SetSteamParticle(_isOpened && newTemperature > 100f);
 
 		SetColor(colorFactor);
 		UIIndicatorsController.Instance.SetTemperature($"Текущая температура: {newTemperature:F1}°C");
@@ -63,6 +81,14 @@ public class SteamGeneratorActor : Singleton<SteamGeneratorActor>
 	{
 		_isPlugin = state;
 		UIIndicatorsController.Instance.SetPlugin(_isPlugin);
+	}
+
+	public void SetSteamParticle(bool state)
+	{
+		if (_steamParticle.activeSelf == state)
+			return;
+		
+		_steamParticle.SetActive(state);
 	}
 
 	private Coroutine _coroutine;

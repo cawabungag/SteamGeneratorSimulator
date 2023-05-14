@@ -18,6 +18,7 @@ namespace States.Implementation
 		public void Start()
 		{
 			SteamGeneratorActor.Instance.SetPlugin(true);
+			SteamGeneratorActor.Instance.SetTemperature(0);
 		}
 
 		public void Execute(float deltaTime)

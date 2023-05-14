@@ -44,7 +44,7 @@ namespace DefaultNamespace.UI
 		{
 			if (state == null)
 				return;
-			
+
 			if (!_states.TryGetValue(state.StateId, out var stateController))
 				return;
 
@@ -66,7 +66,8 @@ namespace DefaultNamespace.UI
 			var stateStatus = state.Status;
 			newState.Initialize(state.Duration.ToString("0.00"), GetTextByStateType(stateType),
 				GetColorByStateType(stateType),
-				GetTextByStateStatus(stateStatus), GetColorByStateStatus(stateStatus), state.StateId.ToString(), state.OnComplete);
+				GetTextByStateStatus(stateStatus), GetColorByStateStatus(stateStatus), state.StateId.ToString(),
+				state.OnComplete);
 		}
 
 		private Color GetColorByStateStatus(StateStatus status)
@@ -122,8 +123,18 @@ namespace DefaultNamespace.UI
 				case StateType.Maintenance:
 					stateText = "Поддерживание";
 					break;
-				default:
-					throw new ArgumentOutOfRangeException(nameof(stateType), stateType, null);
+				case StateType.Open:
+					stateText = "Открытие";
+					break;
+				case StateType.Close:
+					stateText = "Закрытие";
+					break;
+				case StateType.PluggingIn:
+					stateText = "Включение";
+					break;
+				case StateType.PluggingOut:
+					stateText = "Выключение";
+					break;
 			}
 
 			return stateText;
@@ -141,7 +152,8 @@ namespace DefaultNamespace.UI
 					stateColor = _maintanceColor;
 					break;
 				default:
-					throw new ArgumentOutOfRangeException(nameof(stateType), stateType, null);
+					stateColor = _maintanceColor;
+					break;
 			}
 
 			return stateColor;

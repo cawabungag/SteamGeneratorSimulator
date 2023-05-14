@@ -17,6 +17,7 @@ namespace States
 		private Coroutine _statesRequest;
 		private Coroutine _stateDeleteRequest;
 		private Coroutine _statePutRequeste;
+		private Coroutine _deleteAllStates;
 
 		private void Start()
 		{
@@ -41,10 +42,10 @@ namespace States
 		{
 			var newUpdateStateDto = new UpdateStateDto(type, status, duration);
 			var json = JsonConvert.SerializeObject(newUpdateStateDto);
-			var put = new UnityWebRequest($"{GET_STATES_URL}/{stateId}", "PUT"); 
+			var put = new UnityWebRequest($"{GET_STATES_URL}/{stateId}", "PUT");
 			var bodyRaw = Encoding.UTF8.GetBytes(json);
 			put.uploadHandler = new UploadHandlerRaw(bodyRaw);
-			put.SetRequestHeader("Content-Type", "application/json"); 
+			put.SetRequestHeader("Content-Type", "application/json");
 			yield return put.SendWebRequest();
 			Debug.Log($"Put state: {put.result} Json: {json}");
 			StopCoroutine(_statePutRequeste);
@@ -79,8 +80,6 @@ namespace States
 							case StateStatus.Finished:
 								Bootstrap.Instance.StateMachine.FinishCurentState();
 								break;
-							default:
-								throw new ArgumentOutOfRangeException();
 						}
 					}
 				}
@@ -88,6 +87,33 @@ namespace States
 
 			StopCoroutine(_statesRequest);
 			_statesRequest = StartCoroutine(RequestNewStates(DELAY_BETWEEN_REQUESTS));
+		}
+
+		public void DeleteAll()
+		{
+			_deleteAllStates = StartCoroutine(DeleteStates());
+		}
+
+		private IEnumerator DeleteStates()
+		{
+			Debug.LogError("Delete all states");
+			var unityWebRequest = UnityWebRequest.Get(GET_STATES_URL);
+			yield return unityWebRequest.SendWebRequest();
+
+			if (unityWebRequest.result != UnityWebRequest.Result.Success)
+				yield break;
+
+			var statesJson = unityWebRequest.downloadHandler.text;
+			var states = JsonConvert.DeserializeObject<State[]>(statesJson);
+			foreach (var state in states)
+			{
+				var delete = UnityWebRequest.Delete($"{GET_STATES_URL}/{state.Id}");
+				yield return delete.SendWebRequest();
+				Debug.Log($"Delete state: {delete.result}");
+			}
+
+			Bootstrap.Instance.StateMachine.FinishAllState();
+			StopCoroutine(_deleteAllStates);
 		}
 	}
 }
