@@ -33,6 +33,7 @@ namespace States
 		private IEnumerator RequestDeleteState(Guid stateId)
 		{
 			var delete = UnityWebRequest.Delete($"{GET_STATES_URL}/{stateId}");
+			delete.certificateHandler = new DefaultCertificateHandler();
 			yield return delete.SendWebRequest();
 			Debug.Log($"Delete state: {delete.result}");
 			StopCoroutine(_stateDeleteRequest);
@@ -43,6 +44,7 @@ namespace States
 			var newUpdateStateDto = new UpdateStateDto(type, status, duration);
 			var json = JsonConvert.SerializeObject(newUpdateStateDto);
 			var put = new UnityWebRequest($"{GET_STATES_URL}/{stateId}", "PUT");
+			put.certificateHandler = new DefaultCertificateHandler();
 			var bodyRaw = Encoding.UTF8.GetBytes(json);
 			put.uploadHandler = new UploadHandlerRaw(bodyRaw);
 			put.SetRequestHeader("Content-Type", "application/json");
@@ -56,6 +58,7 @@ namespace States
 			yield return new WaitForSeconds(delayBetweenRequests);
 
 			var unityWebRequest = UnityWebRequest.Get(GET_STATES_URL);
+			unityWebRequest.certificateHandler = new DefaultCertificateHandler();
 			yield return unityWebRequest.SendWebRequest();
 
 			if (unityWebRequest.result == UnityWebRequest.Result.Success)
@@ -98,6 +101,7 @@ namespace States
 		{
 			Debug.LogError("Delete all states");
 			var unityWebRequest = UnityWebRequest.Get(GET_STATES_URL);
+			unityWebRequest.certificateHandler = new DefaultCertificateHandler();
 			yield return unityWebRequest.SendWebRequest();
 
 			if (unityWebRequest.result != UnityWebRequest.Result.Success)
@@ -108,12 +112,21 @@ namespace States
 			foreach (var state in states)
 			{
 				var delete = UnityWebRequest.Delete($"{GET_STATES_URL}/{state.Id}");
+				delete.certificateHandler = new DefaultCertificateHandler();
 				yield return delete.SendWebRequest();
 				Debug.Log($"Delete state: {delete.result}");
 			}
 
 			Bootstrap.Instance.StateMachine.FinishAllState();
 			StopCoroutine(_deleteAllStates);
+		}
+	}
+	
+	public class DefaultCertificateHandler : CertificateHandler
+	{ 
+		protected override bool ValidateCertificate(byte[] certificateData)
+		{
+			return true;
 		}
 	}
 }
